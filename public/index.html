@@ -1,0 +1,247 @@
+<!doctype HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+<title> new_document </title>
+<meta name="keywords" content="" />
+<meta name="description" content="hello" />
+<link rel="stylesheet" href="img/style.css">
+</head>
+
+<body>
+<div class="modal js-step-1">
+    <div class="modal-inner">
+        <form method="post" action="" id="" class="js-form-getTitle">
+        <div class="modal-body">
+            <div class="form-add">
+                <label class="label">输入URL(网页地址、图片地址)：</label>
+                <p class="item"><input type="text" class="text" placeholder="" name="url"></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="sub"><a href="javascript:;" class="js-closeModal">取消</a><a href="javascript:;" class="primary js-getTitle">添加</a></span>
+        </div>
+        </form>
+    </div>
+</div>
+<div class="modal js-step-2">
+    <div class="modal-inner">
+        <form method="post" action="" id="" class="js-form-addLink">
+        <div class="modal-body">
+            <div class="form-add">
+                <label class="label">标题</label>
+                <p class="item"><input type="text" class="text" placeholder="网页标题" name="title"></p>
+                <label class="label">标签</label>
+                <p class="item"><input type="text" class="text" placeholder="多个标签请使用逗号分隔" name="tag"></p>
+                <label class="label">描述</label>
+                <p class="item"><input type="text" class="text" placeholder="" name="desc"></p>
+                <input type="hidden" name="url" value=""/>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <span class="sub"><a href="javascript:;" class="js-closeModal">取消</a><a href="javascript:;" class="primary js-addLink">保存</a></span>
+            <span class="mark"><label class="label"><input type="checkbox" name="private" /> 私藏</label></span>
+        </div>
+        </form>
+    </div>
+</div>
+<div class="sidebar">
+    <div class="sidebar-profile sidebar-section">
+    <span class="sub"><a href="javascript:;" class="js-logout">退出</a></span><span class="js-user"></span>
+    </div>
+    <div class="sidebar-profile sidebar-section">
+    <span class="sidebar-profile-btn"><a href="javascript:;" class="js-show-login">登录</a><a href="javascript:;" class="js-show-logout">注册</a></span>
+    </div>
+    <div class="sidebar-login sidebar-section">
+        <form method="post" action="" id="" class="js-login">
+            <p><input type="text" class="text" placeholder="邮箱" name="email"></p>
+            <p><input type="password" class="text" placeholder="密码" name="password"></p>
+            <p><input type="submit" value="登录" class="submit"/></p>
+        </form>
+    </div>
+    <div class="sidebar-login sidebar-section">
+        <form method="post" action="" id="" class="js-register">
+            <p><input type="text" class="text" placeholder="邮箱" name="email"></p>
+            <p><input type="password" class="text" placeholder="密码" name="password"></p>
+            <p><input type="password" class="text" placeholder="密码" name="repassword"></p>
+            <p><input type="submit" value="注册" class="submit"/></p>
+        </form>
+    </div>
+    <div class="sidebar-nav">
+    <a href="javascript:;" class="active">我的收藏</a>
+    <a href="javascript:;" class="js-showModal">添加收藏</a>
+    </div>
+</div>
+<div class="main">
+<div class="user">
+
+</div>
+<ul class="link js-link">
+<!-- <li>
+    <p class="title"><a href="">百度搜索</a></p>
+    <p class="ctrl"><span class="sub"><a href="">编辑</a><a href="">删除</a></span><span class="mark"><a href="">百度</a><a href="">搜索</a></span></p>
+</li> -->
+</ul>
+</div>
+<script src="https://cn.avoscloud.com/scripts/lib/av-0.4.2.min.js"></script>
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+$(function () {
+    AV.initialize("vs35j8uy3tmg7nzaavgpkum8uz48c91o6bt078mpz54ez26x", "r6fkcse4urwbfuvhvh16w6afg268s3vdotfu0oartat6zp3j");
+    var $doc = $(document);
+    var User = AV.User.current();
+    var $section = $('.sidebar-section');
+    var events = {
+        init: function() {
+            if (User) {
+                var email = User.get('email');
+                $('.js-user').text(email);
+                $section.eq(0).show();
+                events.getLink();
+            }else {
+                $section.eq(1).show();
+            }
+        },
+        login: function() {
+            var form = this ;
+            var postData = {
+                email : form.email.value,
+                password : form.password.value
+            };
+            AV.User.logIn(postData.email, postData.password, {
+                success: function(user) {
+                    console.log(user);
+                    alert('登录成功');
+                    location.reload();
+                },
+                error:function (user,error) {
+                    alert(error.message);
+                }
+            });
+            return false;
+        },
+        logout:function () {
+            AV.User.logOut();
+            alert('退出成功');
+            location.reload();
+        },
+        register: function() {
+            var form = this ;
+            if (form.password.value!='' && form.password.value!=form.repassword.value) {
+                alert('两次输入的密码不相同，请修改后提交');
+                return false;
+            }
+            var postData = {
+                email : form.email.value,
+                password : form.password.value
+            };
+            AV.Cloud.run('register',postData,{
+                success:function (data) {
+                    if (data.ret=='success') {
+                        alert(data.msg);
+                        location.reload();
+                    }
+                },
+                error:function (error) {
+                    alert(error.message);
+                }
+            })
+            return false;
+        },
+        slogin:function () {
+            $section.eq(2).show().end().eq(3).hide();
+        },
+        slogout:function () {
+            $section.eq(3).show().end().eq(2).hide();
+        },
+        getLink:function () {
+            function initHtml(data) {
+                var html = '';
+                for (var i = 0, len = data.length; i < len; i++) {
+                    var item = data[i];
+                    var tag_arr = item.tag.split(',');
+                    var tag_html = (function () {
+                        var t= '';
+                        for (var i = 0 , len=tag_arr.length; i < len ; i++) {
+                            t+='<a href="">'+tag_arr[i]+'</a>';
+                        }
+                        return t;
+                    })();
+                    html +='<li>';
+                    html +='<p class="title"><a href="' + item.url + '">' + item.title + '</a></p>';
+                    html +='<p class="ctrl"><span class="sub"><a href="">编辑</a><a href="" data-id="'+item.objectId+'">删除</a></span><span class="mark">'+tag_html+'</span></p>';
+                    html +='</li>';
+                }
+                $('.js-link').html(html);
+            }
+            AV.Cloud.run('getLink',null,{
+                success:function (data) {
+                    initHtml(data);
+                }
+            })
+        },
+        showModal:function () {
+            $('.js-step-1').show();
+        },
+        closeModal:function () {
+            $('.modal').hide().find('form')[0].reset();
+        },
+        getTitle:function () {
+            var form = $('.js-form-getTitle')[0];
+            var url = form.url.value;
+            var formAddLink = $('.js-form-addLink')[0];
+            AV.Cloud.run('getTitle',{url:url},{
+                success:function (data) {
+                    formAddLink.title.value = data.title;
+                    formAddLink.desc.value = data.desc;
+                    formAddLink.url.value = url;
+                    $('.js-step-1').hide();
+                    $('.js-step-2').show();
+                }
+            });
+            return false;
+        },
+        addLink:function () {
+            var formAddLink = $('.js-form-addLink')[0];
+            var postData = {
+                title : formAddLink.title.value,
+                url : formAddLink.url.value,
+                tag : formAddLink.tag.value,
+                desc : formAddLink.desc.value,
+                private : formAddLink.private.value
+            }
+            AV.Cloud.run('addLink',postData,{
+                success:function (data) {
+                    if (data.ret=='success') {
+                        alert(data.msg);
+                        location.reload();
+                    }
+                }
+            })
+        }
+    }
+
+    $doc
+        .on('submit','.js-register',events.register)
+        .on('submit','.js-login',events.login)
+        .on('click','.js-logout',events.logout)
+        .on('click','.js-show-login',events.slogin)
+        .on('click','.js-show-logout',events.slogout)
+
+        .on('click','.js-showModal',events.showModal)
+        .on('click','.js-closeModal',events.closeModal)
+
+        .on('submit','.js-form-getTitle',events.getTitle)
+        .on('click','.js-getTitle',events.getTitle)
+
+        .on('submit','.js-form-addLink',events.addLink)
+        .on('click','.js-addLink',events.addLink)
+
+    events.init();
+
+})
+</script>
+</body>
+</html>
