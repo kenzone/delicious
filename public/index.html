@@ -191,6 +191,7 @@ $(function () {
                 success:function (data) {
                     formAddLink.title.value = data.title;
                     formAddLink.desc.value = data.desc || '' ;
+                    formAddLink.tag.value = data.tag ;
                     formAddLink.url.value = url;
                     $('.js-step-1').hide();
                     $('.js-step-2').show();

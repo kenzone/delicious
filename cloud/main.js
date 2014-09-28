@@ -136,14 +136,17 @@ function addTag(tags,callback) {
 /*获取标题*/
 AV.Cloud.define('getTitle',function (req,rep) {
     var url = req.params.url;
-    var query = new AV.Query(Link);
+    var query = new AV.Query(UserLink);
+    query.equalTo('user', User);
     query.equalTo('url',url);
     query.first({
         success:function (link) {
             if (link) {
                 rep.success({
                     title : link.get('title'),
-                    desc : link.get('desc')
+                    desc : link.get('desc'),
+                    tag : link.get('tag'),
+                    private : link.get('private')
                 });
                 return;
             }
@@ -176,11 +179,8 @@ AV.Cloud.define('register', function(req, rep) {
 /*添加收藏*/
 AV.Cloud.define('addLink',function (req,rep) {
     var postData = req.params;
-    addUserLink(postData,function () {
-        rep.success({
-            ret : 'success',
-            msg : '收藏成功'
-        })
+    addUserLink(postData,function (data) {
+        rep.success(data);
     });
     addLink({
         title : postData.title,
