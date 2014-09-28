@@ -41,10 +41,14 @@ function addUserLink(args,callback) {
     query.first({
         success: function(link) {
             if (link) {
-                callback({
-                    ret : 'warning',
-                    msg : '请勿重复收藏'
-                });
+                link.save(args,{
+                    success:function (link) {
+                        callback({
+                            ret : 'success',
+                            msg : '保存成功'
+                        });
+                    }
+                })
                 return;
             }
 

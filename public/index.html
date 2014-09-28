@@ -88,6 +88,17 @@ $(function () {
     var $doc = $(document);
     var User = AV.User.current();
     var $section = $('.sidebar-section');
+    function dateFormat(date) {
+        var d = new Date(date);
+        var o = {
+            y : d.getFullYear(),
+            m : d.getMonth() + 1,
+            d : d.getDate()
+        }
+        o.m = o.m < 10 ? '0'+o.m : o.m ;
+        o.d = o.d < 10 ? '0'+o.d : o.d ;
+        return o.y+'-'+o.m+'-'+o.d ;
+    }
     var events = {
         init: function() {
             if (User) {
@@ -169,7 +180,7 @@ $(function () {
                     if (item.desc) {
                         html +='<p class="desc">"'+item.desc+'"</p>';
                     }
-                    html +='<p class="ctrl"><span class="sub"><a href="">编辑</a><a href="" data-id="'+item.objectId+'">删除</a></span><span class="mark">'+tag_html+'</span></p>';
+                    html +='<p class="ctrl"><span class="sub"><a href="">编辑</a><a href="" data-id="'+item.objectId+'">删除</a>'+dateFormat(item.createdAt)+'</span><span class="mark">'+tag_html+'</span></p>';
                     html +='</li>';
                 }
                 $('.js-link').html(html);
@@ -214,8 +225,8 @@ $(function () {
             }
             AV.Cloud.run('addLink',postData,{
                 success:function (data) {
+                    alert(data.msg);
                     if (data.ret=='success') {
-                        alert(data.msg);
                         location.reload();
                     }
                 }
