@@ -1,1 +1,1 @@
-Cloud code project for 福利书签. Cloud Code Guide: https://cn.avoscloud.com/docs/cloud_code_guide.html
+美味书签
