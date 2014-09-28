@@ -58,8 +58,13 @@ button, input:not([type="radio"]):not([type="checkbox"]), select { vertical-alig
     li {padding: 20px;border-bottom:1px solid #eee;}
     .title {font-size:18px;margin: 0 0 10px;}
     .ctrl {color:#999;
-        a {color:#999;padding: 0 10px;}
+        a {color:#999;margin: 0 15px 0 0;}
+        .mark {
+            a {background: #bbb;color:#fff;padding: 3px 5px;}
+        }
     }
+    .desc {color:#999;}
+    p {margin: 0 0 5px;}
 }
 .modal {position: fixed;left:0;top:0;right:0;bottom:0;background-color: rgba(255,255,255,.5);z-index: 1000;display: none;
     &-inner {background: #fff;width: 600px;margin: 100px auto;border: 1px solid #ddd ;}

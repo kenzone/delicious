@@ -42,7 +42,7 @@
         </div>
         <div class="modal-footer">
             <span class="sub"><a href="javascript:;" class="js-closeModal">取消</a><a href="javascript:;" class="primary js-addLink">保存</a></span>
-            <span class="mark"><label class="label"><input type="checkbox" name="private" /> 私藏</label></span>
+            <span class="mark"><label class="label"><input type="checkbox" name="private"/> 私藏</label></span>
         </div>
         </form>
     </div>
@@ -166,6 +166,9 @@ $(function () {
                     })();
                     html +='<li>';
                     html +='<p class="title"><a href="' + item.url + '" target="_blank">' + item.title + '</a></p>';
+                    if (item.desc) {
+                        html +='<p class="desc">"'+item.desc+'"</p>';
+                    }
                     html +='<p class="ctrl"><span class="sub"><a href="">编辑</a><a href="" data-id="'+item.objectId+'">删除</a></span><span class="mark">'+tag_html+'</span></p>';
                     html +='</li>';
                 }
@@ -191,8 +194,9 @@ $(function () {
                 success:function (data) {
                     formAddLink.title.value = data.title;
                     formAddLink.desc.value = data.desc || '' ;
-                    formAddLink.tag.value = data.tag ;
+                    formAddLink.tag.value = data.tag || '' ;
                     formAddLink.url.value = url;
+                    formAddLink.private.checked = data.private == 'true' ? true : false ;
                     $('.js-step-1').hide();
                     $('.js-step-2').show();
                 }
@@ -206,7 +210,7 @@ $(function () {
                 url : formAddLink.url.value,
                 tag : formAddLink.tag.value,
                 desc : formAddLink.desc.value,
-                private : formAddLink.private.value
+                private : formAddLink.private.checked ? 'true' : 'false'
             }
             AV.Cloud.run('addLink',postData,{
                 success:function (data) {

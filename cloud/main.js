@@ -193,6 +193,7 @@ AV.Cloud.define('getLink',function (req,rep) {
     var query = new AV.Query(UserLink);
     User = req.user;
     query.equalTo('user',User);
+    query.descending('createdAt');
     query.find({
         success:function (data) {
             rep.success(data);
