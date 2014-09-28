@@ -78,12 +78,7 @@
 <div class="user">
 
 </div>
-<ul class="link js-link">
-<!-- <li>
-    <p class="title"><a href="">百度搜索</a></p>
-    <p class="ctrl"><span class="sub"><a href="">编辑</a><a href="">删除</a></span><span class="mark"><a href="">百度</a><a href="">搜索</a></span></p>
-</li> -->
-</ul>
+<ul class="link js-link"></ul>
 </div>
 <script src="https://cn.avoscloud.com/scripts/lib/av-0.4.2.min.js"></script>
 <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
@@ -170,7 +165,7 @@ $(function () {
                         return t;
                     })();
                     html +='<li>';
-                    html +='<p class="title"><a href="' + item.url + '">' + item.title + '</a></p>';
+                    html +='<p class="title"><a href="' + item.url + '" target="_blank">' + item.title + '</a></p>';
                     html +='<p class="ctrl"><span class="sub"><a href="">编辑</a><a href="" data-id="'+item.objectId+'">删除</a></span><span class="mark">'+tag_html+'</span></p>';
                     html +='</li>';
                 }
@@ -195,7 +190,7 @@ $(function () {
             AV.Cloud.run('getTitle',{url:url},{
                 success:function (data) {
                     formAddLink.title.value = data.title;
-                    formAddLink.desc.value = data.desc;
+                    formAddLink.desc.value = data.desc || '' ;
                     formAddLink.url.value = url;
                     $('.js-step-1').hide();
                     $('.js-step-2').show();

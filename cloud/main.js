@@ -49,12 +49,8 @@ function addUserLink(args,callback) {
             }
 
             var userLink = new UserLink();
-            userLink.save({
-                title: args.title,
-                url: args.url,
-                tag: args.tag,
-                user: User
-            }, {
+            args.user = User ;
+            userLink.save(args, {
                 success: function(link) {
                     callback({
                         ret : 'success',
