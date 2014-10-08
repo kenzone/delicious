@@ -7,6 +7,7 @@
 <title> new_document </title>
 <meta name="keywords" content="" />
 <meta name="description" content="hello" />
+<link rel="stylesheet" href="img/font/css/font-awesome.min.css">
 <link rel="stylesheet" href="img/style.css">
 </head>
 
@@ -70,8 +71,11 @@
         </form>
     </div>
     <div class="sidebar-nav">
-    <a href="javascript:;" class="active">我的收藏</a>
-    <a href="javascript:;" class="js-showModal">添加收藏</a>
+    <a href="javascript:;" class="active"><i class="fa fa-bookmark-o"></i> 我的收藏</a>
+    <a href="javascript:;" class="js-showModal"><i class="fa fa-plus"></i> 添加收藏</a>
+    <a href="javascript:;" class="disabled"><i class="fa fa-link"></i> 我的关注</a>
+    <a href="javascript:;" class="disabled">发现</a>
+    <a href="javascript:;" class="disabled">设置</a>
     </div>
 </div>
 <div class="main">
@@ -146,8 +150,15 @@ $(function () {
             AV.Cloud.run('register',postData,{
                 success:function (data) {
                     if (data.ret=='success') {
-                        alert(data.msg);
-                        location.reload();
+                        AV.User.logIn(postData.email, postData.password, {
+                            success: function(user) {
+                                alert('注册成功');
+                                location.reload();
+                            },
+                            error:function (user,error) {
+                                alert(error.message);
+                            }
+                        });
                     }
                 },
                 error:function (error) {
@@ -175,12 +186,12 @@ $(function () {
                         }
                         return t;
                     })();
-                    html +='<li>';
-                    html +='<p class="title"><a href="' + item.url + '" target="_blank">' + item.title + '</a></p>';
+                    html += item.private=='true' ? '<li class="private">' : '<li>' ;
+                    html +='<p class="title"><a href="' + item.url + '" target="_blank" title="'+item.url+'">' + item.title + '</a></p>';
                     if (item.desc) {
                         html +='<p class="desc">"'+item.desc+'"</p>';
                     }
-                    html +='<p class="ctrl"><span class="sub"><a href="">编辑</a><a href="" data-id="'+item.objectId+'">删除</a>'+dateFormat(item.createdAt)+'</span><span class="mark">'+tag_html+'</span></p>';
+                    html +='<p class="ctrl"><span class="sub"><a href="javascript:;" class="js-edit" data-url="'+item.url+'">编辑</a><a href="javascript:;" data-id="'+item.objectId+'" class="js-delete">删除</a>'+dateFormat(item.createdAt)+'</span><span class="mark">'+tag_html+'</span></p>';
                     html +='</li>';
                 }
                 $('.js-link').html(html);
@@ -225,30 +236,72 @@ $(function () {
             }
             AV.Cloud.run('addLink',postData,{
                 success:function (data) {
-                    alert(data.msg);
                     if (data.ret=='success') {
-                        location.reload();
+                        events.closeModal();
+                        events.getLink();
                     }
                 }
             })
+        },
+        delete:function () {
+            var $this = $(this);
+            if (!confirm('确定删除该收藏 ?')) {
+                return ;
+            }
+            var id = $this.attr('data-id');
+            AV.Cloud.run('deleteLink',{id:id},{
+                success:function (data) {
+                    if (data.ret=='success') {
+                        $this.closest('li').remove();
+                        return ;
+                    }
+                    alert(data.msg);
+                }
+            })
+        },
+        edit : function () {
+            var $this = $(this);
+            var url = $this.attr('data-url');
+            var formAddLink = $('.js-form-addLink')[0];
+            AV.Cloud.run('getTitle',{url:url},{
+                success:function (data) {
+                    formAddLink.title.value = data.title;
+                    formAddLink.desc.value = data.desc || '' ;
+                    formAddLink.tag.value = data.tag || '' ;
+                    formAddLink.url.value = url;
+                    formAddLink.private.checked = data.private == 'true' ? true : false ;
+                    $('.js-step-1').hide();
+                    $('.js-step-2').show();
+                }
+            });
         }
     }
 
     $doc
+        /*注册*/
         .on('submit','.js-register',events.register)
+        /*登录*/
         .on('submit','.js-login',events.login)
+        /*退出*/
         .on('click','.js-logout',events.logout)
+        /*展开登录*/
         .on('click','.js-show-login',events.slogin)
+        /*展开注册*/
         .on('click','.js-show-logout',events.slogout)
-
+        /*弹出新增收藏*/
         .on('click','.js-showModal',events.showModal)
+        /*关闭*/
         .on('click','.js-closeModal',events.closeModal)
-
+        /*获取标题*/
         .on('submit','.js-form-getTitle',events.getTitle)
         .on('click','.js-getTitle',events.getTitle)
-
+        /*新增收藏*/
         .on('submit','.js-form-addLink',events.addLink)
         .on('click','.js-addLink',events.addLink)
+        /*删除收藏*/
+        .on('click','.js-delete',events.delete)
+        /*编辑收藏*/
+        .on('click','.js-edit',events.edit)
 
     events.init();
 

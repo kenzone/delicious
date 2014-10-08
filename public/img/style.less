@@ -46,6 +46,7 @@ button, input:not([type="radio"]):not([type="checkbox"]), select { vertical-alig
         a {display: block;line-height: 45px;padding: 0 20px;
             &:hover {background: #278FF7;}
         }
+        .disabled , .disabled:hover {color:lighten(#0065C7, 30%);}
         .active,.active:hover {color:#0b79e5;background: #fff;}
     }
     &-login {padding: 10px 20px;text-align: center;background: #0065C7;line-height: 40px;
@@ -55,10 +56,22 @@ button, input:not([type="radio"]):not([type="checkbox"]), select { vertical-alig
 }
 .main {margin: 0 0 0 240px;}
 .link {line-height: 24px;
-    li {padding: 20px;border-bottom:1px solid #eee;}
+    li {padding: 20px;border-bottom:1px solid #eee;
+        &:hover {
+            .ctrl .sub a {display: inline;}
+        }
+    }
+    .private {background: #FFFFE5;
+        .title {
+            a {color:#a77917;}
+        }
+    }
     .title {font-size:18px;margin: 0 0 10px;}
     .ctrl {color:#999;
         a {color:#999;margin: 0 15px 0 0;}
+        .sub {
+            a {display: none;}
+        }
         .mark {
             a {background: #bbb;color:#fff;padding: 3px 5px;}
         }
